@@ -1,29 +1,23 @@
 const mongoose = require('mongoose')
 
 const orderSchema = new mongoose.Schema({
-  categoryId: {
-    
-  },
   clientId: {
     type: String,
     required: true,
   },
-  allowerId: {
-    type: String
+  driverId: {
+    type: String,
   },
   status: {
     type: Number,
     enum: [0, 1, 2], // 0 -> Pending, 1 -> Approved, 2 -> Rejected
     default: 0
   },
-  userMessage: {
-    type: String,
-    trim: true,
-    default: ""
-  },
-  allowerMessage: {
-    type: String,
-    trim: true,
+  order: {
+    // Array containing all orders in format
+    // [{categoryId: 'kahjsdfj', quantity: 10, price: ''}]
+    type: Array,
+    required: true,
   }
 }, {
   timestamps: true
