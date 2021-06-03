@@ -11,7 +11,7 @@ app = express();
 app.use(express.json());
 
 var corsOptions = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "https://skylaundryp7.netlify.app"],
   credentials: true,
 };
 
