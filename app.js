@@ -37,5 +37,7 @@ app.get("/", (req, res) =>
     message: "Hey! The backend is working. Explore routes from the code",
   })
 );
+// Ping
+app.get('/ping', (req, res) => res.status(200).json({message: "pong"}))
 
 app.listen(PORT, () => console.info(`Started listening on PORT ${PORT}`));

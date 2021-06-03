@@ -87,7 +87,6 @@ const userCtrl = {
   refreshToken: (req, res) => {
     try {
       const rf_token = req.cookies.refreshtoken;
-      console.log(req.cookies)
       if (!rf_token)
         return res
           .status(400)
