@@ -104,6 +104,31 @@ const userCtrl = {
       res.status(500).json({ message: error.message });
     }
   },
+  getUserDetails: async (req, res) => {
+    try {
+      const { id } = req.params
+      if (id.length !== 24) return res.status(400).json({ message: "Please provide correct id" })
+
+      const user  = await Users.findById(req.params.id).select('_id name createdAt')
+
+      if (!user) return res.status(404).json({ message: "Requested user does not exist" })
+
+      res.json(user)
+    }
+    catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+  getDrivers: async (req, res) => {
+    try {
+      const drivers  = await Users.find({ role: 1 }).select('_id name')
+
+      res.json(drivers)
+    }
+    catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
 };
 
 const createAccessToken = (user) => {
