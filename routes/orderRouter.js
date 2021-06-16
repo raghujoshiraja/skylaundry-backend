@@ -5,16 +5,21 @@ const adminAuth = require("../middleware/adminAuth");
 const userDetails = require("../middleware/userDetails");
 const orderDetails = require("../middleware/orderDetails");
 
-router.route("/")
+router
+  .route("/")
   .get(auth, userDetails, orderCtrl.get)
-  .post(auth, userDetails, orderCtrl.create)
+  .post(auth, userDetails, orderCtrl.create);
 
-router.route("/:id")
+router
+  .route("/:id")
   .get(auth, userDetails, orderDetails, orderCtrl.getSingle)
   .put(auth, orderDetails, orderDetails, orderCtrl.update)
-  .delete(auth, userDetails, orderDetails, orderCtrl.delete)
+  .delete(auth, userDetails, orderDetails, orderCtrl.delete);
 
-router.route('/add_driver/:id')
-  .put(auth, adminAuth, orderDetails, orderCtrl.addDriver)
+router
+  .route("/change_status/:id/:status")
+  .put(auth, userDetails, orderDetails, orderCtrl.changeStatus);
+
+router.route("/hello").put((req, res) => res.json({ message: "Hello" }));
 
 module.exports = router;
