@@ -1,6 +1,7 @@
 const Categories = require("../models/categoryModel");
 const Orders = require("../models/orderModel");
-const Users = require('../models/userModel')
+const Users = require("../models/userModel");
+
 
 const orderCtrl = {
   get: async (req, res) => {
