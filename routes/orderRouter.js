@@ -14,7 +14,10 @@ router.route("/:id")
   .put(auth, orderDetails, orderDetails, orderCtrl.update)
   .delete(auth, userDetails, orderDetails, orderCtrl.delete)
 
-router.route('/add_driver/:id')
-  .put(auth, adminAuth, orderDetails, orderCtrl.addDriver)
+router.route('/change_status/:id/:status')
+  .put(auth, userDetails, orderDetails, orderCtrl.changeStatus)
+
+router.route('/hello')
+  .put((req, res) => res.json({message: "Hello"}))
 
 module.exports = router;
