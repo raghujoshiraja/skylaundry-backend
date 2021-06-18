@@ -9,6 +9,6 @@ router.route("/logout").get(userCtrl.logout);
 router.route("/refresh_token").get(userCtrl.refreshToken);
 router.route("/user_details/:id").get(userCtrl.getUserDetails);
 router.route("/infor").get(auth, userCtrl.getUser);
-router.route("/users").get(auth, adminAuth, userCtrl.getUsers);
+router.route("/users").get(auth, userCtrl.getUsers);
 
 module.exports = router;

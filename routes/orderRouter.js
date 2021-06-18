@@ -24,6 +24,10 @@ router
   .route("/confirm_payment/:id")
   .put(auth, adminAuth, orderCtrl.confirmPayment);
 
+router
+  .route("/confirm_payments/:userId")
+  .put(auth, adminAuth, orderCtrl.confirmPayments);
+
 router.route("/hello").put((req, res) => res.json({ message: "Hello" }));
 
 module.exports = router;

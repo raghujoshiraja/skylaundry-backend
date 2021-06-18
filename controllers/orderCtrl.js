@@ -12,7 +12,9 @@ const orderCtrl = {
         res.json(await Orders.find({})); // Fetch all orders
       } else if (role === 1) {
         // Driver Response
-        res.json(await Orders.find({ driverId: id })); // Fetch driver-specific orders
+        res.json(
+          await Orders.find({ $or: [{ driverId: id }, { dropOffDriver: id }] })
+        ); // Fetch driver-specific orders
       } else {
         // User Reponse
         const orders = await Orders.find({ clientId: id });
@@ -32,7 +34,12 @@ const orderCtrl = {
       // Add some sort of array avlidator in the future here
 
       // Check if user is admin or driver. Else disallow
-      if (role !== 2 && order.clientId !== userId && order.driverId !== _id)
+      if (
+        role !== 2 &&
+        order.clientId !== userId &&
+        order.driverId !== userId &&
+        order.dropOffDriverId !== userId
+      )
         return res
           .status(403)
           .json({ message: "Not authorized to access this entry" });
@@ -154,6 +161,7 @@ const orderCtrl = {
       const { status, id: orderId } = req.params;
       const { role, id: userId } = req.userDetails;
       const isAuthorizedDriver = req.order.driverId === userId;
+      const isAuthorizedDeliveryDriver = req.order.dropOffDriverId === userId;
       const isAuthorizedClient = req.order.clientId === userId;
 
       // Validate Order Id
@@ -249,7 +257,7 @@ const orderCtrl = {
         case 6:
           // 6 = Delivered by delivery Driver, payment pending by default
           // Picked Up
-          if (!isAuthorizedDriver || req.order.status !== 5)
+          if (!isAuthorizedDeliveryDriver || req.order.status !== 5)
             return res
               .status(403)
               .json({ message: "Not authorized driver, or invalid status" });
@@ -279,6 +287,27 @@ const orderCtrl = {
 
       // Update account
       await Orders.findByIdAndUpdate(id, { paymentDone: true });
+
+      return res.json({ message: "Payment Successfull" });
+    } catch (err) {
+      res.status(500).json({ message: err.mesage });
+    }
+  },
+  confirmPayments: async (req, res) => {
+    try {
+      const { userId } = req.params;
+
+      if (
+        !userId ||
+        userId.length !== 24 ||
+        !(await Users.exists({ _id: userId }))
+      )
+        return res
+          .status(400)
+          .json({ message: "Order with the given userId does not exist" });
+
+      // Update account
+      await Orders.updateMany({ clientId: userId }, { paymentDone: true });
 
       return res.json({ message: "Payment Successfull" });
     } catch (err) {
