@@ -20,6 +20,10 @@ router
   .route("/change_status/:id/:status")
   .put(auth, userDetails, orderDetails, orderCtrl.changeStatus);
 
+router
+  .route("/confirm_payment/:id")
+  .put(auth, adminAuth, orderCtrl.confirmPayment);
+
 router.route("/hello").put((req, res) => res.json({ message: "Hello" }));
 
 module.exports = router;

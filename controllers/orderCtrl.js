@@ -67,12 +67,12 @@ const orderCtrl = {
           })
         );
 
-        console.log(rawOrder);
-
         const newOrder = new Orders({
           clientId: req.user.id,
           order: rawOrder,
-          total: rawOrder.map(order => order.price * order.weight).reduce((a, b) => a + b, 0)
+          total: rawOrder
+            .map((order) => order.price * order.weight)
+            .reduce((a, b) => a + b, 0),
         });
         await newOrder.save();
 
@@ -111,8 +111,6 @@ const orderCtrl = {
             return { categoryId, weight, price: categoryPrice };
           })
         );
-
-        console.log(rawOrder);
 
         const newOrder = new Orders({
           clientId: req.user.id,
@@ -247,7 +245,7 @@ const orderCtrl = {
             status: 5,
           });
 
-          return res.json({ message: "added drop off driver successfully" })
+          return res.json({ message: "added drop off driver successfully" });
         case 6:
           // 6 = Delivered by delivery Driver, payment pending by default
           // Picked Up
@@ -259,23 +257,30 @@ const orderCtrl = {
           await Orders.findByIdAndUpdate(orderId, { status: 6 });
 
           return res.json({ message: "Successfully dropped off" });
-        case 8:
-          // 8 = Payment Done
-          if (role !== 2)
-            return res.status(400).json({ message: "Not an admin" });
-
-          // Update account
-          await Orders.findByIdAndUpdate(orderId, { status: 8 });
-
-          return res.json({ message: "Payment Successfull" });
-
         default:
-          return res
-            .status(400)
-            .json({ message: "Please add correct Request Status (allowed: 0 to 9)" });
+          return res.status(400).json({
+            message: "Please add correct Request Status (allowed: 0 to 9)",
+          });
       }
 
       res.json({ message: "Status changed successfully" });
+    } catch (err) {
+      res.status(500).json({ message: err.mesage });
+    }
+  },
+  confirmPayment: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (!id || id.length !== 24 || !(await Orders.exists({ _id: id })))
+        return res
+          .status(400)
+          .json({ message: "Order with the given id does not exist" });
+
+      // Update account
+      await Orders.findByIdAndUpdate(id, { paymentDone: true });
+
+      return res.json({ message: "Payment Successfull" });
     } catch (err) {
       res.status(500).json({ message: err.mesage });
     }

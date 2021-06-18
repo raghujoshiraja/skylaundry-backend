@@ -20,9 +20,7 @@ const orderSchema = new mongoose.Schema(
       // 3 = Washing (Processing wash cycle)
       // 4 = Washed, Ready to be deliverd
       // 5 = Delivery Driver Allotted
-      // 6 = Delivered by delivery Driver, payment pending by default
-      // 7 = Payment pending
-      // 8 = Payment Done
+      // 6 = Delivered by delivery Driver, order Complete
       default: 0,
     },
     order: {
@@ -37,6 +35,10 @@ const orderSchema = new mongoose.Schema(
     },
     total: {
       type: Number,
+    },
+    paymentDone: {
+      type: Boolean,
+      default: false,
     },
   },
   {

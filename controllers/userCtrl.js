@@ -88,13 +88,10 @@ const userCtrl = {
     try {
       const rf_token = req.cookies.refreshtoken;
       if (!rf_token)
-        return res
-          .status(400)
-          .json({ message: "Please Authorize" });
+        return res.status(400).json({ message: "Please Authorize" });
 
       jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
-        if (error)
-          res.status(400).json({ message: "Invalid Token" });
+        if (error) res.status(400).json({ message: "Invalid Token" });
 
         const accessToken = createAccessToken({ id: user.id });
 
@@ -106,29 +103,35 @@ const userCtrl = {
   },
   getUserDetails: async (req, res) => {
     try {
-      const { id } = req.params
-      if (id.length !== 24) return res.status(400).json({ message: "Please provide correct id" })
+      const { id } = req.params;
+      if (id.length !== 24)
+        return res.status(400).json({ message: "Please provide correct id" });
 
-      const user  = await Users.findById(req.params.id).select('_id name createdAt')
+      const user = await Users.findById(req.params.id).select(
+        "_id name createdAt"
+      );
 
-      if (!user) return res.status(404).json({ message: "Requested user does not exist" })
+      if (!user)
+        return res
+          .status(404)
+          .json({ message: "Requested user does not exist" });
 
-      res.json(user)
-    }
-    catch (err) {
+      res.json(user);
+    } catch (err) {
       res.status(500).json({ message: err.message });
     }
   },
-  getDrivers: async (req, res) => {
+  getUsers: async (req, res) => {
     try {
-      const drivers  = await Users.find({ role: 1 }).select('_id name')
+      const users = await Users.find({
+        $or: [{ role: 0 }, { role: 1 }],
+      }).select("_id name role");
 
-      res.json(drivers)
-    }
-    catch (err) {
+      res.json(users);
+    } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }
+  },
 };
 
 const createAccessToken = (user) => {
